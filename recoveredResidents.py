@@ -85,35 +85,35 @@ class Quarantined:
 
         scroll_x=Scrollbar(Table_frame,orient=HORIZONTAL)
         scroll_y = Scrollbar(Table_frame, orient=VERTICAL)
-        self.residents_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Recovery date","docId","Doctor Name","Hospital Id","Hospital Name"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+        self.Recovered_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Recovery date","docId","Doctor Name","Hospital Id","Hospital Name"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
 
         scroll_x.pack(side=BOTTOM,fill=X)
         scroll_y.pack(side=RIGHT,fill=Y)
-        scroll_x.config(command=self.residents_table.xview())
-        scroll_y.config(command=self.residents_table.yview())
+        scroll_x.config(command=self.Recovered_table.xview())
+        scroll_y.config(command=self.Recovered_table.yview())
 
-        self.residents_table.heading("Spl Id", text="Spl Id")
-        self.residents_table.heading("Name", text="Name")
-        self.residents_table.heading("Recovery date", text="Recovery date")
-        self.residents_table.heading("docId", text="docId")
-        self.residents_table.heading("Doctor Name", text="Doctor Name")
+        self.Recovered_table.heading("Spl Id", text="Spl Id")
+        self.Recovered_table.heading("Name", text="Name")
+        self.Recovered_table.heading("Recovery date", text="Recovery date")
+        self.Recovered_table.heading("docId", text="docId")
+        self.Recovered_table.heading("Doctor Name", text="Doctor Name")
 
-        self.residents_table.heading("Hospital Id", text="Hospital Id")
+        self.Recovered_table.heading("Hospital Id", text="Hospital Id")
 
-        self.residents_table.heading("Hospital Name", text="Hospital Name")
-        self.residents_table["show"]="headings"
-        self.residents_table.column("Spl Id",width=50)
-        self.residents_table.column("Name", width=100)
-        self.residents_table.column("Recovery date", width=100)
-        self.residents_table.column("docId", width=100)
-        self.residents_table.column("Hospital Id", width=100)
-        self.residents_table.column("Hospital Name", width=100)
-        self.residents_table.pack(fill=BOTH,expand=1)
-        self.residents_table.bind("<ButtonRelease-1>",self.get_cursor)
+        self.Recovered_table.heading("Hospital Name", text="Hospital Name")
+        self.Recovered_table["show"]="headings"
+        self.Recovered_table.column("Spl Id",width=50)
+        self.Recovered_table.column("Name", width=100)
+        self.Recovered_table.column("Recovery date", width=100)
+        self.Recovered_table.column("docId", width=100)
+        self.Recovered_table.column("Hospital Id", width=100)
+        self.Recovered_table.column("Hospital Name", width=100)
+        self.Recovered_table.pack(fill=BOTH,expand=1)
+        self.Recovered_table.bind("<ButtonRelease-1>",self.get_cursor)
         self.fetch_data()
         self.Clear()
-        self.residents_table.pack()
+        self.Recovered_table.pack()
 
 
     def add_quarantined(self):
@@ -128,12 +128,12 @@ class Quarantined:
     def fetch_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.`SplId`,a.Name,b.RecovDate,b.docId,c.docName,b.hosId,d.hosName from residents a,recovered b,doctors c,hospitals d where a.`SplId`=b.splid and b.docId=c.docId and b.hosId=d.hosId")
+        cur.execute("select a.`SplId`,a.Name,b.RecovDate,b.docId,c.docName,b.hosId,d.hosName from residents a,recovered b,doctors c,hospitals d where a.`SplId`=b.splid and b.docId=c.docId and b.hosId=d.hosId ")
         rows=cur.fetchall()
         if len(rows)!=0:
-            self.residents_table.delete(*self.residents_table.get_children())
+            self.Recovered_table.delete(*self.Recovered_table.get_children())
             for row in rows:
-                self.residents_table.insert('',END,values=row)
+                self.Recovered_table.insert('',END,values=row)
 
                 con.commit()
         con.close()
@@ -145,8 +145,8 @@ class Quarantined:
         self.hoId.set("")
 
     def get_cursor(self,eve):
-        cursor_row=self.residents_table.focus()
-        content=self.residents_table.item(cursor_row)
+        cursor_row=self.Recovered_table.focus()
+        content=self.Recovered_table.item(cursor_row)
         row=content['values']
         self.Spl_Id.set(row[0])
         self.recovDate.set(row[2])
@@ -180,9 +180,9 @@ class Quarantined:
 
         rows=cur.fetchall()
         if len(rows)!=0:
-            self.residents_table.delete(*self.residents_table.get_children())
+            self.Recovered_table.delete(*self.Recovered_table.get_children())
             for row in rows:
-                self.residents_table.insert('',END,values=row)
+                self.Recovered_table.insert('',END,values=row)
 
                 con.commit()
         con.close()

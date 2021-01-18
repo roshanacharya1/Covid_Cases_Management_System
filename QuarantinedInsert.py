@@ -85,30 +85,30 @@ class Quarantined:
 
         scroll_x=Scrollbar(Table_frame,orient=HORIZONTAL)
         scroll_y = Scrollbar(Table_frame, orient=VERTICAL)
-        self.residents_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Start Date","EndDate","Place"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+        self.Quarantined_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Start Date","EndDate","Place"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
 
         scroll_x.pack(side=BOTTOM,fill=X)
         scroll_y.pack(side=RIGHT,fill=Y)
-        scroll_x.config(command=self.residents_table.xview())
-        scroll_y.config(command=self.residents_table.yview())
+        scroll_x.config(command=self.Quarantined_table.xview())
+        scroll_y.config(command=self.Quarantined_table.yview())
 
-        self.residents_table.heading("Spl Id", text="Spl Id")
-        self.residents_table.heading("Name", text="Name")
-        self.residents_table.heading("Start Date", text="Start Date")
-        self.residents_table.heading("EndDate", text="EndDate")
-        self.residents_table.heading("Place", text="Place")
-        self.residents_table["show"]="headings"
-        self.residents_table.column("Spl Id",width=50)
-        self.residents_table.column("Name", width=100)
-        self.residents_table.column("Start Date", width=100)
-        self.residents_table.column("EndDate", width=100)
-        self.residents_table.column("Place", width=100)
-        self.residents_table.pack(fill=BOTH,expand=1)
-        self.residents_table.bind("<ButtonRelease-1>",self.get_cursor)
+        self.Quarantined_table.heading("Spl Id", text="Spl Id")
+        self.Quarantined_table.heading("Name", text="Name")
+        self.Quarantined_table.heading("Start Date", text="Start Date")
+        self.Quarantined_table.heading("EndDate", text="EndDate")
+        self.Quarantined_table.heading("Place", text="Place")
+        self.Quarantined_table["show"]="headings"
+        self.Quarantined_table.column("Spl Id",width=50)
+        self.Quarantined_table.column("Name", width=100)
+        self.Quarantined_table.column("Start Date", width=100)
+        self.Quarantined_table.column("EndDate", width=100)
+        self.Quarantined_table.column("Place", width=100)
+        self.Quarantined_table.pack(fill=BOTH,expand=1)
+        self.Quarantined_table.bind("<ButtonRelease-1>",self.get_cursor)
         self.fetch_data()
         self.Clear()
-        self.residents_table.pack()
+        self.Quarantined_table.pack()
 
 
     def add_quarantined(self):
@@ -126,9 +126,9 @@ class Quarantined:
         cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place from residents a,quarantined b where a.`SplId`=b.splid")
         rows=cur.fetchall()
         if len(rows)!=0:
-            self.residents_table.delete(*self.residents_table.get_children())
+            self.Quarantined_table.delete(*self.Quarantined_table.get_children())
             for row in rows:
-                self.residents_table.insert('',END,values=row)
+                self.Quarantined_table.insert('',END,values=row)
 
                 con.commit()
         con.close()
@@ -140,8 +140,8 @@ class Quarantined:
         self.Place.set("")
 
     def get_cursor(self,eve):
-        cursor_row=self.residents_table.focus()
-        content=self.residents_table.item(cursor_row)
+        cursor_row=self.Quarantined_table.focus()
+        content=self.Quarantined_table.item(cursor_row)
         row=content['values']
         self.Spl_Id.set(row[0])
         self.startDate.set(row[2])
@@ -175,9 +175,9 @@ class Quarantined:
 
         rows=cur.fetchall()
         if len(rows)!=0:
-            self.residents_table.delete(*self.residents_table.get_children())
+            self.Quarantined_table.delete(*self.Quarantined_table.get_children())
             for row in rows:
-                self.residents_table.insert('',END,values=row)
+                self.Quarantined_table.insert('',END,values=row)
 
                 con.commit()
         con.close()

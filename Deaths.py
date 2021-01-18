@@ -85,30 +85,30 @@ class Hospitalized:
 
         scroll_x=Scrollbar(Table_frame,orient=HORIZONTAL)
         scroll_y = Scrollbar(Table_frame, orient=VERTICAL)
-        self.residents_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Death Date","hosId","docId"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+        self.Deaths_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Death Date","hosId","docId"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
 
         scroll_x.pack(side=BOTTOM,fill=X)
         scroll_y.pack(side=RIGHT,fill=Y)
-        scroll_x.config(command=self.residents_table.xview())
-        scroll_y.config(command=self.residents_table.yview())
+        scroll_x.config(command=self.Deaths_table.xview())
+        scroll_y.config(command=self.Deaths_table.yview())
 
-        self.residents_table.heading("Spl Id", text="Spl Id")
-        self.residents_table.heading("Name", text="Name")
-        self.residents_table.heading("Death Date", text="Start Date")
-        self.residents_table.heading("hosId", text="hosId")
-        self.residents_table.heading("docId", text="docId")
-        self.residents_table["show"]="headings"
-        self.residents_table.column("Spl Id",width=50)
-        self.residents_table.column("Name", width=100)
-        self.residents_table.column("Death Date", width=100)
-        self.residents_table.column("hosId", width=50)
-        self.residents_table.column("docId", width=50)
-        self.residents_table.pack(fill=BOTH,expand=1)
-        self.residents_table.bind("<ButtonRelease-1>",self.get_cursor)
+        self.Deaths_table.heading("Spl Id", text="Spl Id")
+        self.Deaths_table.heading("Name", text="Name")
+        self.Deaths_table.heading("Death Date", text="Start Date")
+        self.Deaths_table.heading("hosId", text="hosId")
+        self.Deaths_table.heading("docId", text="docId")
+        self.Deaths_table["show"]="headings"
+        self.Deaths_table.column("Spl Id",width=50)
+        self.Deaths_table.column("Name", width=100)
+        self.Deaths_table.column("Death Date", width=100)
+        self.Deaths_table.column("hosId", width=50)
+        self.Deaths_table.column("docId", width=50)
+        self.Deaths_table.pack(fill=BOTH,expand=1)
+        self.Deaths_table.bind("<ButtonRelease-1>",self.get_cursor)
         self.fetch_data()
         self.Clear()
-        self.residents_table.pack()
+        self.Deaths_table.pack()
 
 
     def add_hospitalizedResidents(self):
@@ -126,9 +126,9 @@ class Hospitalized:
         cur.execute("select a.`SplId`,a.Name,b.Deathdate,b.hosId,b.docid from residents a,deaths b where a.`SplId`=b.splId")
         rows=cur.fetchall()
         if len(rows)!=0:
-            self.residents_table.delete(*self.residents_table.get_children())
+            self.Deaths_table.delete(*self.Deaths_table.get_children())
             for row in rows:
-                self.residents_table.insert('',END,values=row)
+                self.Deaths_table.insert('',END,values=row)
 
                 con.commit()
         con.close()
@@ -140,8 +140,8 @@ class Hospitalized:
         self.DocId.set("")
 
     def get_cursor(self,eve):
-        cursor_row=self.residents_table.focus()
-        content=self.residents_table.item(cursor_row)
+        cursor_row=self.Deaths_table.focus()
+        content=self.Deaths_table.item(cursor_row)
         row=content['values']
         self.SplId.set(row[0])
         self.deathDate.set(row[2])
@@ -176,9 +176,9 @@ class Hospitalized:
 
         rows=cur.fetchall()
         if len(rows)!=0:
-            self.residents_table.delete(*self.residents_table.get_children())
+            self.Deaths_table.delete(*self.Deaths_table.get_children())
             for row in rows:
-                self.residents_table.insert('',END,values=row)
+                self.Deaths_table.insert('',END,values=row)
 
                 con.commit()
         con.close()
