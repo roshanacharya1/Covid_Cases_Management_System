@@ -15,5 +15,5 @@ A simple covid cases managagement system to manage covid-cases in technologicall
 | ![](ScreenShots/ernew.jpg)|![](ScreenShots/schema.png)|
 
 # Backend
-MySQL Workbench
+(MySQL Workbench)
 All SQL commands are provided in thr SQL Queries File Above.
