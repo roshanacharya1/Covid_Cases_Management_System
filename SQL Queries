@@ -1,0 +1,96 @@
+Residents table:
+CREATE TABLE `residents` (
+  `SplId` varchar(45)  NOT NULL,
+  `Name` varchar(45) DEFAULT NULL,
+  `Gender` varchar(45)  DEFAULT NULL,
+  `CovidStatus` varchar(45)  DEFAULT NULL,
+  `Family_no` int(11) DEFAULT NULL,
+  PRIMARY KEY (`SplId`)
+)
+
+
+Hospitals Table:
+CREATE TABLE `hospitals` (
+  `hosId` int(11) NOT NULL,
+  `hosName` varchar(45) DEFAULT NULL,
+  `TotalBeds` int(11) DEFAULT NULL,
+  `UnoccupiedBeds` int(11) DEFAULT NULL,
+  PRIMARY KEY (`hosId`)
+) 
+
+Quarantine_center Table:
+CREATE TABLE `quarantine_center` (
+  `Place_id` int(11) NOT NULL,
+  `PLace_naem` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`Place_id`)
+) 
+
+Deaths table:
+CREATE TABLE `deaths` (
+  `splId` varchar(45) NOT NULL,
+  `DeathDate` date DEFAULT NULL,
+  `hosId` int(11) DEFAULT NULL,
+  `Place_Id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`splId`),
+  KEY `deathhosp_idx` (`hosId`),
+  KEY `deathPlace_idx` (`Place_Id`),
+  CONSTRAINT `deathPlace` FOREIGN KEY (`Place_Id`) REFERENCES `quarantine_center` (`Place_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `deathhosp` FOREIGN KEY (`hosId`) REFERENCES `hospitals` (`hosId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `deaths_ibfk_1` FOREIGN KEY (`splId`) REFERENCES `residents` (`SplId`) ON DELETE CASCADE ON UPDATE CASCADE
+) 
+
+Recovered Table:
+CREATE TABLE `recovered` (
+  `splId` varchar(45) NOT NULL,
+  `RecovDate` date NOT NULL,
+  `hosId` int(11) DEFAULT NULL,
+  `Place_Id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`splId`,`RecovDate`),
+  KEY `recovhosp_idx` (`hosId`),
+  KEY `recovPlace_idx` (`Place_Id`),
+  CONSTRAINT `recovPlace` FOREIGN KEY (`Place_Id`) REFERENCES `quarantine_center` (`Place_id`),
+  CONSTRAINT `recovered_ibfk_1` FOREIGN KEY (`splId`) REFERENCES `residents` (`SplId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `recovhosp` FOREIGN KEY (`hosId`) REFERENCES `hospitals` (`hosId`) ON DELETE CASCADE ON UPDATE CASCADE
+) 
+
+Hospitalized Table
+CREATE TABLE `hospitalized` (
+  `splId` varchar(45) NOT NULL,
+  `hosId` int(11) DEFAULT NULL,
+  `startDate` date NOT NULL,
+  `EndDate` date DEFAULT NULL,
+  PRIMARY KEY (`splId`,`startDate`),
+  KEY `hospitalizhosp_idx` (`hosId`),
+  CONSTRAINT `hospitalized_ibfk_1` FOREIGN KEY (`splId`) REFERENCES `residents` (`SplId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `hospitalizhosp` FOREIGN KEY (`hosId`) REFERENCES `hospitals` (`hosId`) ON DELETE CASCADE ON UPDATE CASCADE
+) 
+
+Quarantined Table
+CREATE TABLE `quarantined` (
+  `splId` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `startDate` date NOT NULL,
+  `endDate` date DEFAULT NULL,
+  `Place_Id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`splId`,`startDate`),
+  KEY `quarnPlace_idx` (`Place_Id`),
+  CONSTRAINT `quarantined_ibfk_1` FOREIGN KEY (`splId`) REFERENCES `residents` (`SplId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `quarnPlace` FOREIGN KEY (`Place_Id`) REFERENCES `quarantine_center` (`Place_id`) ON DELETE CASCADE ON UPDATE CASCADE
+)
+
+Trigger :
+CREATE DEFINER=`root`@`localhost` TRIGGER `residents_BEFORE_INSERT` BEFORE INSERT ON `residents` FOR EACH ROW BEGIN
+if length(new.SplId)>8 or length(new.SplId)<8
+then
+signal sqlstate '45000'
+set message_text='Special Id is not Valid';
+end if;
+END
+
+
+Stored Procedure:
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_HospitalInfo`()
+begin
+select ho.hosId,ho.hosName,ho.TotalBeds,ho.TotalBeds-count(*)  from hospitals ho where ho.hosId in (select h.hosId from hospitalized h where h.hosId=ho.hosId group by(h.hosId)  having count(*)>0) group by(ho.hosId);
+end
+
+
