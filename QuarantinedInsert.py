@@ -38,8 +38,8 @@ class Quarantined:
 
         txt_Spl_id.grid(row=1, column=1, pady=10, sticky="w")
 
-        lb1_Name = Label(Manage_frame, text="start Date", font=("times new roman", 20))
-        lb1_Name.grid(row=2, columnspan=1, pady=10, sticky="w")
+        lb1_startDate = Label(Manage_frame, text="start Date", font=("times new roman", 20))
+        lb1_startDate.grid(row=2, columnspan=1, pady=10, sticky="w")
 
         txt_startDate = Entry(Manage_frame,textvariable=self.startDate, font=("times new roman", 15))
         txt_startDate.grid(row=2, column=1, pady=10, sticky="w")
@@ -50,11 +50,11 @@ class Quarantined:
         txt_endDate = Entry(Manage_frame, textvariable=self.endDate, font=("times new roman", 15))
         txt_endDate.grid(row=3, column=1, pady=10, sticky="w")
 
-        lb2_Status = Label(Manage_frame, text="Place", font=("times new roman", 20))
-        lb2_Status.grid(row=4, columnspan=1, pady=10, sticky="w")
+        lb2_placeId = Label(Manage_frame, text="PlaceId", font=("times new roman", 20))
+        lb2_placeId.grid(row=4, columnspan=1, pady=10, sticky="w")
 
-        txt_docId = Entry(Manage_frame, textvariable=self.Place, font=("times new roman", 15))
-        txt_docId.grid(row=4, column=1, pady=10, sticky="w")
+        txt_placeId = Entry(Manage_frame, textvariable=self.Place, font=("times new roman", 15))
+        txt_placeId.grid(row=4, column=1, pady=10, sticky="w")
 
 
 
@@ -85,7 +85,7 @@ class Quarantined:
 
         scroll_x=Scrollbar(Table_frame,orient=HORIZONTAL)
         scroll_y = Scrollbar(Table_frame, orient=VERTICAL)
-        self.Quarantined_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Start Date","EndDate","Place"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+        self.Quarantined_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Start Date","EndDate","Place_Id","Place"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
 
         scroll_x.pack(side=BOTTOM,fill=X)
@@ -97,12 +97,14 @@ class Quarantined:
         self.Quarantined_table.heading("Name", text="Name")
         self.Quarantined_table.heading("Start Date", text="Start Date")
         self.Quarantined_table.heading("EndDate", text="EndDate")
+        self.Quarantined_table.heading("Place_Id", text="Place_Id")
         self.Quarantined_table.heading("Place", text="Place")
         self.Quarantined_table["show"]="headings"
         self.Quarantined_table.column("Spl Id",width=50)
         self.Quarantined_table.column("Name", width=100)
         self.Quarantined_table.column("Start Date", width=100)
         self.Quarantined_table.column("EndDate", width=100)
+        self.Quarantined_table.column("Place_Id", width=100)
         self.Quarantined_table.column("Place", width=100)
         self.Quarantined_table.pack(fill=BOTH,expand=1)
         self.Quarantined_table.bind("<ButtonRelease-1>",self.get_cursor)
@@ -123,7 +125,7 @@ class Quarantined:
     def fetch_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place from residents a,quarantined b where a.`SplId`=b.splid")
+        cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place_Id,c.PLace_naem from residents a,quarantined b,quarantine_center c where a.`SplId`=b.splid and b.Place_Id=c.Place_id" )
         rows=cur.fetchall()
         if len(rows)!=0:
             self.Quarantined_table.delete(*self.Quarantined_table.get_children())
@@ -151,7 +153,7 @@ class Quarantined:
     def update_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("update quarantined set `startDate`=%s,`endDate`=%s,`Place`=%s where `splId`=%s" , (self.startDate.get(), self.endDate.get(), self.Place.get(), self.Spl_Id.get()))
+        cur.execute("update quarantined set `startDate`=%s,`endDate`=%s,`Place_id`=%s where `splId`=%s" , (self.startDate.get(), self.endDate.get(), self.Place.get(), self.Spl_Id.get()))
         con.commit()
         self.fetch_data()
         self.Clear()
@@ -171,7 +173,7 @@ class Quarantined:
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
         cur.execute(
-            "select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place from residents a,quarantined b where a.`SplId`=b.splid and a.`"+ str(self.search_value.get())+"` like '%" + str(self.search_text.get()) + "%'")
+            "select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place_Id,c.PLace_naem from residents a,quarantined b,quarantine_center c where a.`SplId`=b.splid and b.Place_Id=c.Place_id and a.`"+ str(self.search_value.get())+"` like '%" + str(self.search_text.get()) + "%'")
 
         rows=cur.fetchall()
         if len(rows)!=0:

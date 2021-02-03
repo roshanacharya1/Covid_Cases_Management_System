@@ -41,23 +41,18 @@ class Hospitalized:
 
         txt_Spl_id.grid(row=1, column=1, pady=10, sticky="w")
 
-        lb1_Name = Label(Manage_frame, text="start Date", font=("times new roman", 20))
-        lb1_Name.grid(row=2, columnspan=1, pady=10, sticky="w")
+        lb1_startDate = Label(Manage_frame, text="start Date", font=("times new roman", 20))
+        lb1_startDate.grid(row=2, columnspan=1, pady=10, sticky="w")
 
         txt_startDate = Entry(Manage_frame,textvariable=self.startDate, font=("times new roman", 15))
         txt_startDate.grid(row=2, column=1, pady=10, sticky="w")
 
-        lb2_gender = Label(Manage_frame, text="enddate", font=("times new roman", 20))
-        lb2_gender.grid(row=3, columnspan=1, pady=10, sticky="w")
+        lb2_endDate = Label(Manage_frame, text="enddate", font=("times new roman", 20))
+        lb2_endDate.grid(row=3, columnspan=1, pady=10, sticky="w")
 
         txt_endDate = Entry(Manage_frame, textvariable=self.endDate, font=("times new roman", 15))
         txt_endDate.grid(row=3, column=1, pady=10, sticky="w")
 
-        lb2_Status = Label(Manage_frame, text="Doctor id", font=("times new roman", 20))
-        lb2_Status.grid(row=4, columnspan=1, pady=10, sticky="w")
-
-        txt_docId = Entry(Manage_frame, textvariable=self.docId, font=("times new roman", 15))
-        txt_docId.grid(row=4, column=1, pady=10, sticky="w")
 
         Hos_id_Label = Label(Manage_frame, text="HospitalId", font=("times new roman", 20))
         Hos_id_Label.grid(row=5, columnspan=1, pady=10, sticky="w")
@@ -65,13 +60,7 @@ class Hospitalized:
         txt_fam = Entry(Manage_frame,textvariable=self.hosId, font=("times new roman", 15))
         txt_fam.grid(row=5, column=1, pady=10, sticky="w")
 
-        lb2_Status = Label(Manage_frame, text="Covid Status", font=("times new roman", 20))
-        lb2_Status.grid(row=6, columnspan=1, pady=10, sticky="w")
 
-        status_combo = ttk.Combobox(Manage_frame,textvariable=self.Recovery_status , font=("times new roman", 20),
-                                    state="readonly", width=13)
-        status_combo['values'] = ("Dead", "Under Recovery","Recovered")
-        status_combo.grid(row=6, column=1, pady=10, sticky="w")
 
         btn_frame=Frame(Manage_frame,bd=4,relief=RIDGE)
         btn_frame.place(x=10,y=500,width=420)
@@ -100,7 +89,7 @@ class Hospitalized:
 
         scroll_x=Scrollbar(Table_frame,orient=HORIZONTAL)
         scroll_y = Scrollbar(Table_frame, orient=VERTICAL)
-        self.Hospitalized_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Start Date","EndDate","hosId","HosName","docId","DocName","status"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+        self.Hospitalized_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Start Date","EndDate","hosId","HosName"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
 
         scroll_x.pack(side=BOTTOM,fill=X)
@@ -114,9 +103,6 @@ class Hospitalized:
         self.Hospitalized_table.heading("EndDate", text="EndDate")
         self.Hospitalized_table.heading("hosId", text="hosId")
         self.Hospitalized_table.heading("HosName", text="HosName")
-        self.Hospitalized_table.heading("docId", text="docId")
-        self.Hospitalized_table.heading("DocName", text="DocName")
-        self.Hospitalized_table.heading("status", text="status")
         self.Hospitalized_table["show"]="headings"
         self.Hospitalized_table.column("Spl Id",width=60)
         self.Hospitalized_table.column("Name", width=100)
@@ -124,9 +110,6 @@ class Hospitalized:
         self.Hospitalized_table.column("EndDate", width=100)
         self.Hospitalized_table.column("hosId", width=50)
         self.Hospitalized_table.column("HosName", width=100)
-        self.Hospitalized_table.column("docId", width=50)
-        self.Hospitalized_table.column("DocName", width=100)
-        self.Hospitalized_table.column("status", width=100)
         self.Hospitalized_table.pack(fill=BOTH,expand=1)
         self.Hospitalized_table.bind("<ButtonRelease-1>",self.get_cursor)
         self.fetch_data()
@@ -137,7 +120,7 @@ class Hospitalized:
     def add_hospitalizedResidents(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur=con.cursor()
-        cur.execute("insert into hospitalized values(%s,%s,%s,%s,%s)",(self.Spl_Id.get(),self.hosId.get(),self.docId.get(),self.startDate.get(),self.endDate.get()))
+        cur.execute("insert into hospitalized values(%s,%s,%s,%s)",(self.Spl_Id.get(),self.hosId.get(),self.startDate.get(),self.endDate.get()))
         con.commit()
         self.fetch_data()
         self.Clear()
@@ -146,7 +129,7 @@ class Hospitalized:
     def fetch_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName,d.docId,d.docName from doctors d,residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and d.docId=b.docId")
+        cur.execute("select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName from residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId ")
         rows=cur.fetchall()
         if len(rows)!=0:
             self.Hospitalized_table.delete(*self.Hospitalized_table.get_children())
@@ -176,7 +159,7 @@ class Hospitalized:
     def update_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("update hospitalized set `startDate`=%s,`EndDate`=%s,`hosId`=%s,`docId`=%s where `splId`=%s", (self.startDate.get(), self.endDate.get(), self.hosId.get(), self.docId.get(), self.Recovery_status.get(),self.Spl_Id.get()))
+        cur.execute("update hospitalized set `startDate`=%s,`EndDate`=%s,`hosId`=%s where `splId`=%s", (self.startDate.get(), self.endDate.get(), self.hosId.get(),self.Spl_Id.get()))
         con.commit()
         self.fetch_data()
         self.Clear()
@@ -196,7 +179,7 @@ class Hospitalized:
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
         cur.execute(
-            "select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName,d.docId,d.docName from doctors d,residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and d.docId=b.docId and a.`" + str(
+            "select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName from residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and a.`" + str(
                 self.search_value.get()) + "` like '%" + str(self.search_text.get()) + "%'")
 
         rows=cur.fetchall()

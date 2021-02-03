@@ -15,7 +15,7 @@ class Hospitalized:
         self.SplId=StringVar()
         self.deathDate=StringVar()
         self.hosId=StringVar()
-        self.DocId=StringVar()
+        self.Place_Id=StringVar()
         self.search_value=StringVar()
         self.search_text=StringVar()
 
@@ -39,23 +39,23 @@ class Hospitalized:
 
         txt_Spl_id.grid(row=1, column=1, pady=10, sticky="w")
 
-        lb1_Name = Label(Manage_frame, text="Death Date", font=("times new roman", 20))
-        lb1_Name.grid(row=2, columnspan=1, pady=10, sticky="w")
+        lb1_DeathDate = Label(Manage_frame, text="Death Date", font=("times new roman", 20))
+        lb1_DeathDate.grid(row=2, columnspan=1, pady=10, sticky="w")
 
-        txt_startDate = Entry(Manage_frame,textvariable=self.deathDate, font=("times new roman", 15))
-        txt_startDate.grid(row=2, column=1, pady=10, sticky="w")
+        txt_deathDate = Entry(Manage_frame,textvariable=self.deathDate, font=("times new roman", 15))
+        txt_deathDate.grid(row=2, column=1, pady=10, sticky="w")
 
-        lb2_gender = Label(Manage_frame, text="Hospital Id", font=("times new roman", 20))
-        lb2_gender.grid(row=3, columnspan=1, pady=10, sticky="w")
+        lb2_hospId = Label(Manage_frame, text="Hospital Id", font=("times new roman", 20))
+        lb2_hospId.grid(row=3, columnspan=1, pady=10, sticky="w")
 
-        txt_endDate = Entry(Manage_frame, textvariable=self.hosId, font=("times new roman", 15))
-        txt_endDate.grid(row=3, column=1, pady=10, sticky="w")
+        txt_hosId = Entry(Manage_frame, textvariable=self.hosId, font=("times new roman", 15))
+        txt_hosId.grid(row=3, column=1, pady=10, sticky="w")
 
-        lb2_Status = Label(Manage_frame, text="Doctor id", font=("times new roman", 20))
-        lb2_Status.grid(row=4, columnspan=1, pady=10, sticky="w")
+        lb2_placeId = Label(Manage_frame, text="Place id", font=("times new roman", 20))
+        lb2_placeId.grid(row=4, columnspan=1, pady=10, sticky="w")
 
-        txt_docId = Entry(Manage_frame, textvariable=self.DocId, font=("times new roman", 15))
-        txt_docId.grid(row=4, column=1, pady=10, sticky="w")
+        txt_placeId = Entry(Manage_frame, textvariable=self.Place_Id, font=("times new roman", 15))
+        txt_placeId.grid(row=4, column=1, pady=10, sticky="w")
 
 
         btn_frame=Frame(Manage_frame,bd=4,relief=RIDGE)
@@ -85,7 +85,7 @@ class Hospitalized:
 
         scroll_x=Scrollbar(Table_frame,orient=HORIZONTAL)
         scroll_y = Scrollbar(Table_frame, orient=VERTICAL)
-        self.Deaths_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Death Date","hosId","docId"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+        self.Deaths_table=ttk.Treeview(Table_frame,columns=("Spl Id","Name","Death Date","hosId","Place_Id"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
 
         scroll_x.pack(side=BOTTOM,fill=X)
@@ -97,13 +97,13 @@ class Hospitalized:
         self.Deaths_table.heading("Name", text="Name")
         self.Deaths_table.heading("Death Date", text="Start Date")
         self.Deaths_table.heading("hosId", text="hosId")
-        self.Deaths_table.heading("docId", text="docId")
+        self.Deaths_table.heading("Place_Id", text="Place_Id")
         self.Deaths_table["show"]="headings"
         self.Deaths_table.column("Spl Id",width=50)
         self.Deaths_table.column("Name", width=100)
         self.Deaths_table.column("Death Date", width=100)
         self.Deaths_table.column("hosId", width=50)
-        self.Deaths_table.column("docId", width=50)
+        self.Deaths_table.column("Place_Id", width=50)
         self.Deaths_table.pack(fill=BOTH,expand=1)
         self.Deaths_table.bind("<ButtonRelease-1>",self.get_cursor)
         self.fetch_data()
@@ -114,7 +114,7 @@ class Hospitalized:
     def add_hospitalizedResidents(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur=con.cursor()
-        cur.execute("insert into deaths values(%s,%s,%s,%s)",(self.SplId.get(),self.deathDate.get(),self.hosId.get(),self.DocId.get()))
+        cur.execute("insert into deaths values(%s,%s,%s,%s)",(self.SplId.get(),self.deathDate.get(),self.hosId.get(),self.Place_Id.get()))
         con.commit()
         self.fetch_data()
         self.Clear()
@@ -123,7 +123,7 @@ class Hospitalized:
     def fetch_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.`SplId`,a.Name,b.Deathdate,b.hosId,b.docid from residents a,deaths b where a.`SplId`=b.splId")
+        cur.execute("select a.`SplId`,a.Name,b.Deathdate,b.hosId,b.Place_Id from residents a,deaths b where a.`SplId`=b.splId")
         rows=cur.fetchall()
         if len(rows)!=0:
             self.Deaths_table.delete(*self.Deaths_table.get_children())
@@ -137,7 +137,7 @@ class Hospitalized:
         self.SplId.set("")
         self.deathDate.set("")
         self.hosId.set("")
-        self.DocId.set("")
+        self.Place_Id.set("")
 
     def get_cursor(self,eve):
         cursor_row=self.Deaths_table.focus()
@@ -146,12 +146,12 @@ class Hospitalized:
         self.SplId.set(row[0])
         self.deathDate.set(row[2])
         self.hosId.set(row[3])
-        self.DocId.set(row[4])
+        self.Place_Id.set(row[4])
 
     def update_data(self):
         con = mysql.connector.connect(host="localhost", user="root", password="", database="residents")
         cur = con.cursor()
-        cur.execute("update deaths set `DeathDate`=%s,`hosId`=%s,`docId`=%s where `splId`=%s", (self.deathDate.get(), self.hosId.get(), self.DocId.get(),self.SplId.get()))
+        cur.execute("update deaths set `DeathDate`=%s,`hosId`=%s,`Place_Id`=%s where `splId`=%s", (self.deathDate.get(), self.hosId.get(), self.Place_Id.get(),self.SplId.get()))
         con.commit()
         self.fetch_data()
         self.Clear()
@@ -171,7 +171,7 @@ class Hospitalized:
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
         cur.execute(
-            "select a.`SplId`,a.Name,b.Deathdate,b.hosId,b.docId from residents a,deaths b where a.`SplId`=b.splId and a.`" + str(
+            "select a.`SplId`,a.Name,b.Deathdate,b.hosId,b.Place_Id from residents a,deaths b where a.`SplId`=b.splId and a.`" + str(
                 self.search_value.get()) + "` like '%" + str(self.search_text.get()) + "%'")
 
         rows=cur.fetchall()

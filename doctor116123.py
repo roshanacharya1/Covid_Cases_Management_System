@@ -109,7 +109,7 @@ class residents:
         scroll_x = Scrollbar(TableDeathData_frame, orient=HORIZONTAL)
         scroll_y = Scrollbar(TableDeathData_frame, orient=VERTICAL)
         self.Deaths_table = ttk.Treeview(TableDeathData_frame,
-                                            columns=("Spl Id", "Name", "Death date", "hospId", "Hospital name"),
+                                            columns=("Spl Id", "Name", "Death date", "hospId", "Hospital name","Place Id","Place name"),
                                             xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
         scroll_x.pack(side=BOTTOM, fill=X)
@@ -122,12 +122,16 @@ class residents:
         self.Deaths_table.heading("Death date", text="Death date")
         self.Deaths_table.heading("hospId", text="hospId")
         self.Deaths_table.heading("Hospital name", text="Hospital name")
+        self.Deaths_table.heading("Place Id", text="hospId")
+        self.Deaths_table.heading("Place name", text="Hospital name")
         self.Deaths_table["show"] = "headings"
         self.Deaths_table.column("Spl Id", width=50)
         self.Deaths_table.column("Name", width=100)
         self.Deaths_table.column("Death date", width=100)
         self.Deaths_table.column("hospId", width=100)
         self.Deaths_table.column("Hospital name", width=100)
+        self.Deaths_table.column("Place Id", width=100)
+        self.Deaths_table.column("Place name", width=100)
         self.Deaths_table.pack(fill=BOTH, expand=1)
 
         self.Deaths_table.bind("<ButtonRelease-1>", self.get_cursor)
@@ -218,7 +222,7 @@ class residents:
         scroll_x = Scrollbar(TableHospitalized_frame, orient=HORIZONTAL)
         scroll_y = Scrollbar(TableHospitalized_frame, orient=VERTICAL)
         self.Hospitalized_table = ttk.Treeview(TableHospitalized_frame,
-                                                columns=("Special Id", "Name", "Start Date", "End Date","Hospital Id","Hospital Name","docId","DocName"),
+                                                columns=("Special Id", "Name", "Start Date", "End Date","Hospital Id","Hospital Name"),
                                                 xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
         scroll_x.pack(side=BOTTOM, fill=X)
@@ -232,8 +236,6 @@ class residents:
         self.Hospitalized_table.heading("End Date", text="EndDate")
         self.Hospitalized_table.heading("Hospital Id", text="Hospital Id")
         self.Hospitalized_table.heading("Hospital Name", text="Hospital Name")
-        self.Hospitalized_table.heading("docId", text="docId")
-        self.Hospitalized_table.heading("DocName", text="DocName")
         self.Hospitalized_table["show"] = "headings"
         self.Hospitalized_table.column("Special Id", width=50)
         self.Hospitalized_table.column("Name", width=100)
@@ -241,8 +243,6 @@ class residents:
         self.Hospitalized_table.column("End Date", width=100)
         self.Hospitalized_table.column("Hospital Id", width=100)
         self.Hospitalized_table.column("Hospital Name", width=100)
-        self.Hospitalized_table.column("docId", width=100)
-        self.Hospitalized_table.column("DocName", width=100)
         self.Hospitalized_table.pack(fill=BOTH, expand=1)
 
         self.Hospitalized_table.bind("<ButtonRelease-1>", self.get_cursor)
@@ -280,7 +280,7 @@ class residents:
         scroll_y = Scrollbar(TableRecovered_frame, orient=VERTICAL)
         self.Recovered_table = ttk.Treeview(TableRecovered_frame,
                                                columns=("Special Id", "Name", "Recovery Date", "Hospital Id",
-                                                        "Hospital Name"),
+                                                        "Hospital Name","Place_Id","Place Name"),
                                                xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
         scroll_x.pack(side=BOTTOM, fill=X)
@@ -293,12 +293,17 @@ class residents:
         self.Recovered_table.heading("Recovery Date", text="RecoveryDate")
         self.Recovered_table.heading("Hospital Id", text="Hospital Id")
         self.Recovered_table.heading("Hospital Name", text="Hospital Name")
+
+        self.Recovered_table.heading("Place_Id", text="Place_Id")
+        self.Recovered_table.heading("Place Name", text="Place Name")
         self.Recovered_table["show"] = "headings"
         self.Recovered_table.column("Special Id", width=50)
         self.Recovered_table.column("Name", width=100)
         self.Recovered_table.column("Recovery Date", width=100)
         self.Recovered_table.column("Hospital Id", width=100)
         self.Recovered_table.column("Hospital Name", width=100)
+        self.Recovered_table.column("Hospital Id", width=100)
+        self.Recovered_table.column("Place Name", width=100)
         self.Recovered_table.pack(fill=BOTH, expand=1)
 
         self.Recovered_table.bind("<ButtonRelease-1>", self.get_cursor)
@@ -336,7 +341,7 @@ class residents:
         scroll_x = Scrollbar(TableQuarantined_frame, orient=HORIZONTAL)
         scroll_y = Scrollbar(TableQuarantined_frame, orient=VERTICAL)
         self.Quarantine_table = ttk.Treeview(TableQuarantined_frame,
-                                            columns=("Special Id", "Name", "Start Date", "End Date",
+                                            columns=("Special Id", "Name", "Start Date", "End Date","Place Id",
                                                      "Place"),
                                             xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
@@ -349,12 +354,14 @@ class residents:
         self.Quarantine_table.heading("Name", text="Name")
         self.Quarantine_table.heading("Start Date", text="Start Date")
         self.Quarantine_table.heading("End Date", text="End Date")
+        self.Quarantine_table.heading("Place Id", text="Place Id")
         self.Quarantine_table.heading("Place", text="Place")
         self.Quarantine_table["show"] = "headings"
         self.Quarantine_table.column("Special Id", width=50)
         self.Quarantine_table.column("Name", width=100)
         self.Quarantine_table.column("Start Date", width=100)
         self.Quarantine_table.column("End Date", width=100)
+        self.Quarantine_table.column("Place Id", width=100)
         self.Quarantine_table.column("Place", width=100)
         self.Quarantine_table.pack(fill=BOTH, expand=1)
 
@@ -436,7 +443,7 @@ class residents:
     def fetchDeath_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select r.Name ,r.SplId,d.DeathDate,e.hosId,e.hosName from hospitals e,residents r,deaths d where r.`SplId`=d.splId and d.hosId=e.hosId")
+        cur.execute("select r.Name ,r.SplId,d.DeathDate,e.hosId,e.hosName,c.Place_id,c.PLace_Naem from hospitals e,residents r,deaths d,quarantine_center c where r.`SplId`=d.splId and d.hosId=e.hosId and d.Place_Id=c.Place_id")
         rows = cur.fetchall()
         if len(rows) != 0:
             self.Deaths_table.delete(*self.Deaths_table.get_children())
@@ -461,7 +468,7 @@ class residents:
     def fetchHospitalized_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.SplId,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName,d.docId,d.docName from doctors d,residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and d.docId=b.docId ")
+        cur.execute("select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName from residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId")
         rows = cur.fetchall()
         if len(rows) != 0:
             self.Hospitalized_table.delete(*self.Hospitalized_table.get_children())
@@ -474,7 +481,7 @@ class residents:
     def fetchRecovered_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.`SplId`,a.Name,b.RecovDate,c.hosId,c.hosName from residents a,recovered b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId")
+        cur.execute("select a.`SplId`,a.Name,b.RecovDate,b.Place_Id,c.PLace_naem,b.hosId,d.hosName from residents a,recovered b,quarantine_center c,hospitals d where a.`SplId`=b.splid and b.Place_Id=c.Place_id and b.hosId=d.hosId")
         rows = cur.fetchall()
         if len(rows) != 0:
             self.Recovered_table.delete(*self.Recovered_table.get_children())
@@ -486,7 +493,7 @@ class residents:
     def fetchQuarantine_data(self):
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
-        cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place from residents a,quarantined b where a.`SplId`=b.splid")
+        cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place_Id,c.PLace_naem from residents a,quarantined b,quarantine_center c where a.`SplId`=b.splid and b.Place_Id=c.Place_id ")
         rows = cur.fetchall()
         if len(rows) != 0:
             self.Quarantine_table.delete(*self.Quarantine_table.get_children())
@@ -545,7 +552,7 @@ class residents:
         con=mysql.connector.connect(host="localhost",user="root",password="",database="residents")
         cur = con.cursor()
 
-        cur.execute("select r.Name ,r.`SplId`,d.DeathDate,e.hosId,e.hosName from hospitals e,residents r,deaths d where r.`SplId`=d.splId and d.hosId=e.hosId and r.`"+ str(self.Deaths_Value.get())+"` like '%" + str(self.Deaths_Text.get()) + "%'")
+        cur.execute("select r.Name ,r.SplId,d.DeathDate,e.hosId,e.hosName,c.Place_id,c.Place_Name from hospitals e,residents r,deaths d,quarantine_center c where r.`SplId`=d.splId and d.hosId=e.hosId and d.Place_Id=c.Place_id r.`"+ str(self.Deaths_Value.get())+"` like '%" + str(self.Deaths_Text.get()) + "%'")
         rows1 = cur.fetchall()
         if len(rows1) != 0:
             self.Deaths_table.delete(*self.Deaths_table.get_children())
@@ -558,7 +565,7 @@ class residents:
         con = mysql.connector.connect(host="localhost", user="root", password="", database="residents")
         cur = con.cursor()
 
-        cur.execute("select a.`SplId`,a.Name,b.recovDate,c.hosId,c.hosName from residents a,recovered b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and a.`"+ str(self.Recovered_Value.get())+"` like '%" + str(self.Recovered_Text.get()) + "%'")
+        cur.execute("select a.`SplId`,a.Name,b.RecovDate,b.Place_Id,c.PLace_naem,b.hosId,d.hosName from residents a,recovered b,quarantine_center c,hospitals d where a.`SplId`=b.splid and b.Place_Id=c.Place_id and b.hosId=d.hosId and a.`"+ str(self.Recovered_Value.get())+"` like '%" + str(self.Recovered_Text.get()) + "%'")
         rows1 = cur.fetchall()
         if len(rows1) != 0:
             self.Recovered_table.delete(*self.Recovered_table.get_children())
@@ -572,7 +579,7 @@ class residents:
         con = mysql.connector.connect(host="localhost", user="root", password="", database="residents")
         cur = con.cursor()
 
-        cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place from residents a,quarantined b where a.`SplId`=b.splId and a.`"+ str(self.Quarantined_Value.get())+"` like '%" + str(self.Quarantined_Text.get()) + "%'")
+        cur.execute("select a.`SplId`,a.Name,b.startDate,b.endDate,b.Place_Id,c.PLace_naem from residents a,quarantined b,quarantine_center c where a.`SplId`=b.splid and b.Place_Id=c.Place_id and a.`"+ str(self.Quarantined_Value.get())+"` like '%" + str(self.Quarantined_Text.get()) + "%'")
         rows1 = cur.fetchall()
         print()
         if len(rows1) != 0:
@@ -586,7 +593,7 @@ class residents:
         con = mysql.connector.connect(host="localhost", user="root", password="", database="residents")
         cur = con.cursor()
 
-        cur.execute("select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName,d.docId,d.docName from doctors d,residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and d.docId=b.docId and a.`"+ str(self.Hospitalized_Value.get())+"` like '%" + str(self.Hospitalized_Text.get()) + "%'")
+        cur.execute("select a.`SplId`,a.Name,b.startDate,b.EndDate,c.hosId,c.hosName from residents a,hospitalized b,hospitals c where a.`SplId`=b.splId and b.hosId=c.hosId and a.`"+ str(self.Hospitalized_Value.get())+"` like '%" + str(self.Hospitalized_Text.get()) + "%'")
         rows1 = cur.fetchall()
         if len(rows1) != 0:
             self.Hospitalized_table.delete(*self.Hospitalized_table.get_children())
