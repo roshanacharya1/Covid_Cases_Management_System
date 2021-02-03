@@ -10,3 +10,5 @@ A simple covid cases managagement system to manage covid-cases in technologicall
 | ![](ScreenShots/view4.jpg)|![](ScreenShots/view3.jpg)|
 |||
 | ![](ScreenShots/view2.jpg)|![](ScreenShots/view1.jpg)|
+|||
+| ![](ScreenShots/ernew.jpg)|![](ScreenShots/schema.png)|
