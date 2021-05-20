@@ -16,4 +16,4 @@ A simple DBMS project to manage covid-cases in technologically deprived areas.bu
 
 # Backend
 (MySQL Workbench)
-All SQL commands are provided in thr SQL Queries File Above.
+All SQL commands are provided in the SQL Queries File Above.
